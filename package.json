@@ -1,0 +1,13 @@
+{
+  "name": "mongo1808",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ngocdungbb1/mongo1808.git",
+  "author": "AnhTuanIT <phamanhtuan24031999@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.2"
+  }
+}
