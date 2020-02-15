@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="/edit" method="POST">
+    <form action="/edit/<%= result._id %>" method="POST">
         <input type="text" name="en" placeholder="EN" value="<%= result.en %>">
         <br><br>
         <input type="text" name="vn" placeholder="VN" value="<%= result.vn %>">

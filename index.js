@@ -17,6 +17,8 @@ const PORT = 3000;
 let strAddDB;
 let objectDelete;
 let objectFind;
+let objectUpdateID;
+let objectUpdateBody;
 
 
 app.set('views', './views');
@@ -51,7 +53,17 @@ app.post('/add', parser, (req, res) => {
     const { en, vn } = req.body;
     strAddDB = { en, vn };
     insertDocument(wordsCollection, (result) => {
-        return res.redirect('back');
+        res.redirect('back');
+    });
+});
+
+app.post('/edit/:id', parser, (req, res) => {
+    const { id } = req.params;
+    const { en, vn } = req.body;
+    objectUpdateID = { _id: ObjectID(id) };
+    objectUpdateBody = { $set: { en, vn } };
+    updateDocument(wordsCollection, (result) => {
+        res.redirect('/');
     });
 });
 //***************************
@@ -104,6 +116,16 @@ const removeDocument = (db, cb) => {
     collection.deleteOne(objectDelete, (err, result) => {
         if(err) return console.log(err);
         console.log('Deleted 1 documents into the collection');
+        cb(result);
+    });
+};
+
+const updateDocument = (db, cb) => {
+    const collection = db.collection('words');
+
+    collection.updateOne(objectUpdateID, objectUpdateBody, (err, result) => {
+        if(err) return console.log(err);
+        console.log('Updated 1 documents into the collection');
         cb(result);
     });
 };
