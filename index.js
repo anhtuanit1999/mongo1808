@@ -16,6 +16,7 @@ const PORT = 3000;
 
 let strAddDB;
 let objectDelete;
+let objectFind;
 
 
 app.set('views', './views');
@@ -23,18 +24,27 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
+    objectFind = {};
     findDocument(wordsCollection, (docs) => {
         res.render('home', { arrWords: docs });
     });
 });
 
-app.get('/xoa/:id', (req, res) => {
+app.get('/remove/:id', (req, res) => {
     objectDelete = { _id: ObjectID(req.params.id) };
     removeDocument(wordsCollection, (docs) =>{
         res.redirect('back');
     });
     // res.send(`${objectDelete}`);
     // console.log(objectDelete);
+});
+
+app.get('/edit/:id', (req, res) => {
+    objectFind = { _id: ObjectID(req.params.id) };
+    findDocument(wordsCollection, (docs) => {
+        res.render('edit', { result: docs[0] });
+        // res.send(docs);
+    });
 });
 
 app.post('/add', parser, (req, res) => {
@@ -55,6 +65,7 @@ MongoClient.connect(url, (err, client) => {
     const db = wordsCollection = client.db(dbName);    
 
     app.listen(PORT, () => console.log(`Server listen at port ${PORT}`));
+    // objectFind = {};
     // insertDocument(db, (res) => {
     //     findDocument(db, (docs) => {
     //         arrWords  = docs;
@@ -66,7 +77,7 @@ MongoClient.connect(url, (err, client) => {
 const findDocument = (db, cb) => {
     const collection = db.collection('words');
 
-    collection.find({}).toArray((err, docs) => {
+    collection.find(objectFind).toArray((err, docs) => {
         if(err) return console.log(err);
         console.log('Find some records');
         cb(docs);
