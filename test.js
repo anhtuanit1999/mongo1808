@@ -28,6 +28,10 @@ db.words.insert({
     vn: "tam biet"
 })
 
+db.words.deleteOne({
+    "_id" : ObjectId("5e47c981ff540ed7cf4dff95")
+});
+
 let w = db.words;
 w.find().pretty();
 

@@ -1,9 +1,11 @@
-const { MongoClient } = require('mongodb');
+//cài body-parser để lấy dữ liệu yarn add body-parser or npm i body-parser
+const { MongoClient, ObjectID } = require('mongodb');
 let wordsCollection;
 
 //****************************
 const express = require('express');
 const app = express();
+const parser = require('body-parser').urlencoded({ extended: false });
 const PORT = 3000;
 
 // let result = [
@@ -11,6 +13,9 @@ const PORT = 3000;
 //     { en: "mouse", vn: "chuot" },
 //     { en: "laptop", vn: "may tinh" }
 // ];
+
+let strAddDB;
+let objectDelete;
 
 
 app.set('views', './views');
@@ -20,6 +25,23 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
     findDocument(wordsCollection, (docs) => {
         res.render('home', { arrWords: docs });
+    });
+});
+
+app.get('/xoa/:id', (req, res) => {
+    objectDelete = { _id: ObjectID(req.params.id) };
+    removeDocument(wordsCollection, (docs) =>{
+        res.redirect('back');
+    });
+    // res.send(`${objectDelete}`);
+    // console.log(objectDelete);
+});
+
+app.post('/add', parser, (req, res) => {
+    const { en, vn } = req.body;
+    strAddDB = { en, vn };
+    insertDocument(wordsCollection, (result) => {
+        return res.redirect('back');
     });
 });
 //***************************
@@ -33,9 +55,11 @@ MongoClient.connect(url, (err, client) => {
     const db = wordsCollection = client.db(dbName);    
 
     app.listen(PORT, () => console.log(`Server listen at port ${PORT}`));
-    // findDocument(db, (docs) => {
-    //     arrWords  = docs;
-    //     client.close();
+    // insertDocument(db, (res) => {
+    //     findDocument(db, (docs) => {
+    //         arrWords  = docs;
+    //         client.close();
+    //     });
     // });
 });
 
@@ -46,6 +70,30 @@ const findDocument = (db, cb) => {
         if(err) return console.log(err);
         console.log('Find some records');
         cb(docs);
+    });
+};
+
+const insertDocument = (db, cb) => {
+    //get the document collection
+    const collection = db.collection('words');
+    let arrlen; // Tim do dai cua chuoi vua them vao db
+    //insert some document
+    collection.insertMany(arrlen = [
+        strAddDB
+    ], (err, result) => {
+        if(err) return console.log(err);
+        console.log(`Inserted ${arrlen.length} documents into the collection`);
+        cb(result);
+    });
+};
+
+const removeDocument = (db, cb) => {
+    const collection = db.collection('words');
+
+    collection.deleteOne(objectDelete, (err, result) => {
+        if(err) return console.log(err);
+        console.log('Deleted 1 documents into the collection');
+        cb(result);
     });
 };
 

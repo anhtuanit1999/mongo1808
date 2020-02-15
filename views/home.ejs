@@ -7,9 +7,17 @@
 </head>
 <body>
     <h3>Words</h3>
+    <form action="/add" method="POST">
+        <input type="text" name="en" placeholder="EN">
+        <br><br>
+        <input type="text" name="vn" placeholder="VN">
+        <br><br>
+        <button>Add word</button>
+    </form>
     <% arrWords.forEach((e) => { %>
         <h4><%= e.en %></h4>
         <h4><%= e.vn %></h4>
+        <a href="/xoa/<%= e._id %>">Xoa</a>
     <% }); %>
 </body>
 </html>
